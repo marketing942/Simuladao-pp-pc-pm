@@ -1351,7 +1351,10 @@ strong, b { font-weight: 700; color: var(--text); }
   .tag { height: auto; min-height: 38px; padding: 8px 14px; font-size: 10.5px;
          letter-spacing: 2px; line-height: 1.5; }
   .scroller { display: none; }
-  .ficha { grid-template-columns: repeat(2, 1fr); margin-top: 34px; }
+  .ficha { margin-top: 34px; }
+  .ficha__item { padding: 16px 6px; }
+  .ficha__item b { font-size: 19px; }
+  .ficha__item span { font-size: 10px; letter-spacing: 1px; }
   .urgente { font-size: 10.5px; letter-spacing: 1.3px; padding: 9px 14px; }
   .relogio span { min-width: 58px; }
 
@@ -1387,7 +1390,6 @@ strong, b { font-weight: 700; color: var(--text); }
 }
 
 @media (max-width: 420px) {
-  .ficha { grid-template-columns: 1fr 1fr; }
   .relogio { gap: 6px; }
   .relogio span { min-width: 52px; padding: 9px 4px 8px; }
 }
@@ -1446,10 +1448,13 @@ strong, b { font-weight: 700; color: var(--text); }
    planas não pode ser a única corporação a aparecer. */
 #onde::before { background-image: url("public/marca-pcpe.webp"); }
 
+/* a ficha da hero tem três itens: data, local e vagas */
+.ficha { grid-template-columns: repeat(3, 1fr); max-width: 700px; }
+
 /* ─── o preço antigo riscado ───
    "Era R$ 69,90": o mesmo risco vermelho do cartão de ingresso, em todos os
    pontos da página que falam de preço. */
-.urgente s, .ficha__item s, .info__sub s, .dock__info s {
+.urgente s, .info__sub s, .dock__info s {
   text-decoration-thickness: 2px; text-decoration-color: var(--danger);
   color: var(--text-mute);
 }
