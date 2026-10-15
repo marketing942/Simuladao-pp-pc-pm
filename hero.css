@@ -1,0 +1,608 @@
+/* =========================================================
+   CPPEM · SIMULADÃO — A ABERTURA DA HERO
+   ---------------------------------------------------------
+   Tudo o que mexe na entrada mora aqui; o resto da hero (título,
+   texto, botões, relógio, ficha) fica no styles.css.
+
+   AS BATIDAS — tudo na cena está amarrado a uma delas. Mudou um
+   tempo, confira os que dependem dele.
+
+     --t1   o LEÃO do CPPEM cai como meteoro e racha a tela. Ele
+            esfria e vira a cratera (cppem-crater.webp), que fica
+            PARADA e APAGADA no fundo pelo resto da visita;
+     --b1   o brasão da PCPE bate à esquerda;
+     --b2   o da PPPE bate à direita;
+     --b3   o da PMPE bate no centro — a batida maior;
+     + .55s o carimbo APENAS 100 VAGAS bate no PMPE.
+
+   A VENDA NÃO ESPERA A ABERTURA: o título entra na hora e o texto
+   e os botões logo depois do impacto do meteoro (--t1). Os brasões
+   continuam caindo com a oferta já na tela.
+
+   Cada brasão tem duas camadas que mexem em transform:
+     .escudo        posição, giro de perspectiva e parallax do mouse;
+     .escudo__corpo a queda, o quique e a flutuação.
+   Separadas de propósito: na mesma caixa, a animação apagaria o
+   parallax (ou o contrário).
+
+   O hero.js segura a cena (.intro-pending) até as imagens estarem
+   decodificadas — no máximo 1,5s — e solta as faíscas de cada batida.
+   ========================================================= */
+.hero {
+  --t1: 1s;
+  --b1: 1.85s; --b2: 2.25s; --b3: 2.75s;
+  --cai-dur: .52s;
+  --impacto: var(--b3);
+
+  /* medidas da cena: tudo sai do tamanho do brasão central */
+  --wc:  clamp(108px, 17vw, 194px);   /* brasão do centro */
+  --ws:  clamp(78px, 12vw, 138px);    /* brasões laterais */
+  --off: clamp(104px, 23vw, 265px);   /* distância do centro aos laterais */
+  --cw:  calc(var(--wc) * 2.85);      /* largura da cratera */
+}
+
+/* a cena espera as imagens; o texto da hero, não */
+.intro-pending .palco, .intro-pending .palco *,
+.intro-pending .palco *::before, .intro-pending .palco *::after,
+.intro-pending .hero__inner, .intro-pending .hero__flash {
+  animation-play-state: paused !important;
+}
+/* fora da tela não há por que gastar quadro */
+.hero.is-out-of-view *, .hero.is-out-of-view *::before, .hero.is-out-of-view *::after {
+  animation-play-state: paused !important;
+}
+
+/* o fundo da hero é PARADO: o atirador e a grade só servem de textura */
+.hero__bg i { opacity: .12; }
+.hero__grid, .hero__scan { opacity: .08; }
+
+/* o texto e os botões entram logo depois do impacto do meteoro */
+.hero .d4 { animation-delay: calc(var(--t1) + .15s); }
+.hero .d5 { animation-delay: calc(var(--t1) + .3s); }
+
+/* o texto da hero passa POR CIMA da cena: a cratera é maior que o palco */
+.hero__inner > :not(.palco) { position: relative; z-index: 3; }
+.hero__sub { margin-top: 20px; }
+
+.palco {
+  position: relative; z-index: 2; isolation: isolate;
+  width: 100%; max-width: 980px; height: calc(var(--wc) * 2.3);
+  margin: clamp(18px, 3.4vh, 34px) auto 0;
+  transform-origin: 50% 44%;
+  --px: 0; --py: 0;
+  animation: palco-afunda 1s cubic-bezier(.16,.8,.2,1) var(--t1) both;
+}
+/* a superfície cede no choque e volta — uma vez só */
+@keyframes palco-afunda {
+  0%   { transform: perspective(1000px) translateZ(0); }
+  9%   { transform: perspective(1000px) translateZ(-70px) scale(.97,.94) rotateX(4deg); }
+  26%  { transform: perspective(1000px) translateZ(10px) scale(1.01,1.02) rotateX(-1deg); }
+  50%  { transform: perspective(1000px) translateZ(-8px) scale(.997,.994); }
+  100% { transform: perspective(1000px) translateZ(0); }
+}
+
+/* a caixa da cratera e do meteoro: a mesma, para o leão cair exatamente
+   no buraco que ele deixa. Sem parallax: o fundo fica parado. */
+.marco {
+  position: absolute; left: 50%; top: 44%; z-index: 0;
+  width: var(--cw); aspect-ratio: 400 / 465;
+  transform: translate(-50%, -50%);
+}
+
+/* ─── 1 · o meteoro ───
+   Vem do canto de cima, pequeno e desfocado, girando, com a cauda de fogo
+   apontando para onde ele veio. No choque ele NÃO estoura em branco: o
+   brilho fica contido e ele some RÁPIDO — o desenho da arte da cratera não
+   coincide traço a traço com a logo, e os dois juntos viram imagem dupla. */
+.meteoro {
+  position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0;
+  animation:
+    meteoro-voa .75s cubic-bezier(.55,0,.95,.45) calc(var(--t1) - .75s) both,
+    meteoro-funde .38s var(--ease) var(--t1) forwards;
+}
+.meteoro img {
+  position: relative; z-index: 1; width: 100%; height: auto;
+  filter: drop-shadow(0 0 10px rgba(255,170,90,.55)) drop-shadow(0 0 30px rgba(214,94,36,.35));
+}
+.meteoro__cauda {
+  position: absolute; left: 50%; top: 50%; z-index: 0;
+  width: 280%; height: 26%; transform-origin: 0 50%;
+  transform: translateY(-50%) rotate(-38deg);
+  background: linear-gradient(90deg, rgba(255,190,110,.55), rgba(224,110,50,.3) 28%, rgba(196,90,40,.08) 60%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent);
+  filter: blur(6px);
+  /* a cauda apaga um instante ANTES do choque: no impacto só o leão aparece */
+  animation: cauda-apaga .25s var(--ease) calc(var(--t1) - .14s) forwards;
+}
+@keyframes cauda-apaga { to { opacity: 0; transform: translateY(-50%) rotate(-38deg) scaleX(.2); } }
+@keyframes meteoro-voa {
+  0%   { opacity: 0; transform: translate(62vw, -75vh) rotate(-50deg) scale(.12); filter: blur(8px) brightness(1.3); }
+  20%  { opacity: 1; }
+  74%  { filter: blur(2px) brightness(1.2); }
+  100% { opacity: 1; transform: scale(1.04); filter: blur(0) brightness(1.15); }
+}
+@keyframes meteoro-funde {
+  0%   { opacity: 1;   transform: scale(1.04); filter: brightness(1.2); }
+  25%  { opacity: .35; transform: scale(.97);  filter: brightness(.8); }
+  100% { opacity: 0;   transform: scale(.96);  filter: brightness(.4); }
+}
+
+/* ─── 2 · a cratera ───
+   A arte (cppem-crater.webp) esfria rápido e ASSENTA em baixa opacidade:
+   é resto do impacto, não pode disputar com os brasões nem com o texto.
+   Depois disso fica parada. */
+.cratera {
+  position: absolute; inset: 0; z-index: 1; opacity: 0;
+  animation: cratera-surge .35s var(--ease) var(--t1) forwards;
+}
+@keyframes cratera-surge { to { opacity: 1; } }
+.cratera__art {
+  position: absolute; left: 50%; top: 50%;
+  width: 210%; max-width: none; height: auto;
+  transform: translate(-50%, -50%);
+  mask-image: radial-gradient(ellipse, #000 30%, rgba(0,0,0,.95) 44%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse, #000 30%, rgba(0,0,0,.95) 44%, transparent 70%);
+  opacity: .3; filter: brightness(.55) saturate(.4);
+  animation: cratera-esfria 3.6s cubic-bezier(.2,.6,.3,1) var(--t1) both;
+}
+@keyframes cratera-esfria {
+  0%   { opacity: .9;  filter: brightness(1.2) saturate(1.2); }
+  18%  { opacity: .7;  filter: brightness(.95) saturate(.9); }
+  100% { opacity: .3;  filter: brightness(.55) saturate(.4); }
+}
+/* o calor no formato exato da logo: some junto com o esfriamento */
+.cratera__calor {
+  position: absolute; inset: 0; pointer-events: none;
+  -webkit-mask: url("public/emblema-leao.webp") center / contain no-repeat;
+          mask: url("public/emblema-leao.webp") center / contain no-repeat;
+  background: radial-gradient(ellipse at 50% 70%, #ffbb65, #da4d16 42%, #762109 75%);
+  mix-blend-mode: screen; opacity: 0;
+  animation: calor-apaga 2.6s ease-out var(--t1) both;
+}
+@keyframes calor-apaga {
+  0%   { opacity: .5; }
+  20%  { opacity: .26; }
+  60%  { opacity: .06; }
+  100% { opacity: 0; }
+}
+
+/* a bacia: a tela afunda em volta do choque e volta */
+.impacto-bacia {
+  position: absolute; z-index: 1; left: 50%; top: 44%;
+  width: 95%; aspect-ratio: 1.8; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(ellipse, rgba(0,0,0,.8) 12%, rgba(0,0,0,.5) 35%, transparent 68%);
+  box-shadow: inset 0 14px 35px rgba(0,0,0,.85), inset 0 -3px 12px rgba(255,181,106,.25);
+  opacity: 0;
+  animation: bacia-cede 1.6s ease-out var(--t1) both;
+}
+@keyframes bacia-cede {
+  0%   { opacity: 0;   transform: translate(-50%,-50%) scale(.2); }
+  9%   { opacity: 1;   transform: translate(-50%,-50%) scale(.95,.8); }
+  38%  { opacity: .55; transform: translate(-50%,-50%) scale(1.13,1); }
+  100% { opacity: 0;   transform: translate(-50%,-50%) scale(1.3); }
+}
+/* o bafo de calor do choque — curto, e nunca branco */
+.impacto-aura {
+  position: absolute; inset: -10%; z-index: 0; pointer-events: none; opacity: 0;
+  background: radial-gradient(ellipse, rgba(255,141,65,.18), transparent 62%);
+  animation: aura-sopra 1.2s ease-out var(--t1) both;
+}
+@keyframes aura-sopra {
+  0%   { opacity: 0; transform: scale(.3); }
+  12%  { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.3); }
+}
+
+/* a fumaça sobe da cratera logo depois do choque — DUAS vezes e para:
+   fumaça infinita fazia o fundo parecer sempre em movimento */
+.fumaca { position: absolute; inset: 10% 15% 40%; z-index: 2; pointer-events: none; opacity: .5; }
+.fumaca i {
+  position: absolute; bottom: 0; width: 38%; aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,190,170,.20), rgba(140,130,120,.08) 45%, transparent 70%);
+  filter: blur(10px); opacity: 0;
+  animation: fumaca-sobe 4.5s linear calc(var(--t1) + var(--fd, 0s)) 2 both;
+}
+.fumaca i:nth-child(1) { left: 6%;  --fd: 0s; }
+.fumaca i:nth-child(2) { left: 30%; --fd: .9s; }
+.fumaca i:nth-child(3) { left: 52%; --fd: 1.8s; }
+.fumaca i:nth-child(4) { left: 18%; --fd: 2.6s; }
+.fumaca i:nth-child(5) { left: 44%; --fd: .4s; }
+@keyframes fumaca-sobe {
+  0%   { opacity: 0;   transform: translate3d(0, 20%, 0) scale(.6); }
+  20%  { opacity: .55; }
+  100% { opacity: 0;   transform: translate3d(15%, -160%, 0) scale(1.9); }
+}
+
+/* ─── as rachaduras ───
+   Vidro partido a partir do centro. A grande nasce no impacto do meteoro;
+   cada brasão traz a sua, menor e girada. Aparecem inteiras na batida e
+   assentam como cicatriz fraca. */
+.cena__racha {
+  position: absolute; left: 50%; top: 50%; z-index: 1; pointer-events: none;
+  width: 230%; height: auto; aspect-ratio: 1; transform: translate(-50%, -50%);
+  overflow: visible; opacity: 0;
+  mask-image: radial-gradient(circle, #000 18%, rgba(0,0,0,.6) 34%, transparent 58%);
+  -webkit-mask-image: radial-gradient(circle, #000 18%, rgba(0,0,0,.6) 34%, transparent 58%);
+  animation: racha-some 2.4s var(--ease) var(--t1) forwards;
+}
+.cena__racha path {
+  fill: none; stroke: #F0DCB0; stroke-width: .38; stroke-linejoin: bevel;
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+  filter: drop-shadow(0 0 1.2px rgba(240,220,176,.9));
+  animation: racha-corre .22s cubic-bezier(.2,.8,.3,1) var(--t1) forwards;
+}
+.cena__racha .racha__aneis path { stroke-width: .26; stroke: rgba(240,220,176,.75); animation-delay: calc(var(--t1) + .08s); }
+@keyframes racha-corre { to { stroke-dashoffset: 0; } }
+@keyframes racha-some {
+  0%   { opacity: 1; }
+  25%  { opacity: .8; }
+  100% { opacity: .14; }
+}
+
+/* ─── 3 · os brasões ─── */
+.escudo {
+  --w: var(--ws); --x: 0px; --y: 0px; --giro: 0deg; --fundo: 1;
+  --hit: var(--b1); --img: none;
+  position: absolute; left: 50%; top: 57%; z-index: 3;
+  width: var(--w);
+  transform:
+    translate(-50%, -50%) translate(var(--x), var(--y))
+    translate(calc(var(--px) * var(--fundo) * 14px), calc(var(--py) * var(--fundo) * 10px))
+    perspective(900px)
+    rotateY(calc(var(--giro) + var(--px) * 10deg))
+    rotateX(calc(var(--py) * -8deg));
+  transition: transform .5s var(--ease);
+}
+.escudo--pc {
+  --x: calc(var(--off) * -1); --y: calc(var(--wc) * .1); --giro: 10deg; --fundo: .7;
+  --hit: var(--b1); --img: url("public/brasao-pcpe.webp");
+  --impacto: var(--b1);
+}
+.escudo--pp {
+  --x: var(--off); --y: calc(var(--wc) * .1); --giro: -10deg; --fundo: .7;
+  --hit: var(--b2); --img: url("public/brasao-pppe.webp");
+  --impacto: var(--b2);
+}
+.escudo--pm {
+  --w: var(--wc); --y: calc(var(--wc) * .08); --fundo: 1.25; z-index: 4;
+  --hit: var(--b3); --img: url("public/brasao-pmpe.webp");
+}
+
+/* Cada brasão chega do seu jeito: o PCPE em diagonal, com balanço; o PPPE
+   pesado, com pouco rebote; o PMPE na vertical, com o maior impacto. */
+.escudo__corpo { position: relative; z-index: 2; }
+.escudo--pc .escudo__corpo {
+  animation:
+    pc-chega var(--cai-dur) cubic-bezier(.6,0,.95,.4) calc(var(--hit) - var(--cai-dur)) both,
+    pc-assenta .6s var(--freada) var(--hit) forwards,
+    pc-flutua 4.8s ease-in-out calc(var(--hit) + .6s) infinite;
+}
+.escudo--pp .escudo__corpo {
+  animation:
+    pp-chega var(--cai-dur) cubic-bezier(.6,0,.95,.4) calc(var(--hit) - var(--cai-dur)) both,
+    pp-assenta .6s var(--freada) var(--hit) forwards,
+    pp-flutua 5.4s ease-in-out calc(var(--hit) + .6s) infinite;
+}
+.escudo--pm .escudo__corpo {
+  animation:
+    pm-chega var(--cai-dur) cubic-bezier(.6,0,.95,.4) calc(var(--hit) - var(--cai-dur)) both,
+    pm-assenta .6s var(--freada) var(--hit) forwards,
+    pm-flutua 4.2s ease-in-out calc(var(--hit) + .6s) infinite;
+}
+.escudo__corpo img {
+  position: relative; z-index: 1; display: block; width: 100%; height: auto;
+  filter: drop-shadow(0 2px 1px rgba(255,222,160,.24)) drop-shadow(0 18px 16px #000);
+}
+@keyframes pc-chega {
+  0%   { opacity: 0; transform: translate(-50vw,-24vh) rotate(-45deg) scale(1.65); filter: blur(9px) brightness(1.4); }
+  25%  { opacity: 1; }
+  75%  { transform: translate(-12%, -6%) rotate(8deg) scale(1.12); filter: blur(1px) brightness(1.15); }
+  100% { opacity: 1; transform: scale(1.04); filter: blur(0) brightness(1.15); }
+}
+@keyframes pc-assenta {
+  0%   { transform: scale(1.04) rotate(3deg); filter: brightness(1.15); }
+  30%  { transform: translate(4%,-2%) rotate(-4deg); }
+  65%  { transform: rotate(1.5deg); }
+  100% { transform: none; filter: brightness(1); }
+}
+@keyframes pp-chega {
+  0%   { opacity: 0; transform: translate(34vw,-60vh) rotate(20deg) scale(2); filter: blur(10px) brightness(1.4); }
+  18%  { opacity: 1; }
+  80%  { transform: translate(4%,-20%) rotate(3deg) scale(1.12); }
+  100% { opacity: 1; transform: translateY(3%) scale(1.04,.98); filter: blur(0) brightness(1.15); }
+}
+@keyframes pp-assenta {
+  0%   { transform: translateY(3%) scale(1.04,.98); filter: brightness(1.15); }
+  35%  { transform: translateY(-1%) rotate(-1deg); }
+  100% { transform: none; filter: brightness(1); }
+}
+@keyframes pm-chega {
+  0%   { opacity: 0; transform: translateY(-76vh) scale(3.4); filter: blur(14px) brightness(1.5); }
+  20%  { opacity: 1; }
+  75%  { transform: translateY(-32%) scale(1.4); filter: blur(3px) brightness(1.25); }
+  100% { opacity: 1; transform: scale(1.09); filter: blur(0) brightness(1.2); }
+}
+@keyframes pm-assenta {
+  0%   { transform: scale(1.09); filter: brightness(1.2); }
+  18%  { transform: translateY(5%) scale(1.04,.96); }
+  45%  { transform: translateY(-4%) scale(.99,1.02); }
+  72%  { transform: translateY(1%); }
+  100% { transform: none; filter: brightness(1); }
+}
+@keyframes pc-flutua { 0%,100% { transform: translateY(0) rotate(-.6deg); } 50% { transform: translateY(-4%) rotate(.5deg); } }
+@keyframes pp-flutua { 0%,100% { transform: translateY(0) rotate(.2deg); }  50% { transform: translateY(-1.7%) rotate(-.2deg); } }
+@keyframes pm-flutua { 0%,100% { transform: translateY(0); }                 50% { transform: translateY(-2.8%); } }
+
+/* a sombra escura atrás de cada brasão: destaca do fundo sem virar "sol" */
+.escudo__halo {
+  position: absolute; left: 50%; top: 50%; z-index: 0;
+  width: 135%; aspect-ratio: 1; transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(0,0,0,.55), rgba(0,0,0,.2) 45%, transparent 68%);
+  opacity: 0;
+  animation: halo-entra .5s var(--ease) var(--hit) forwards;
+}
+@keyframes halo-entra { to { opacity: 1; } }
+
+/* o reflexo que atravessa o brasão — recortado pelo próprio desenho do
+   brasão (máscara com a imagem), então a luz só passa no metal */
+.escudo__brilho {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: .4;
+  -webkit-mask: var(--img) center / 100% 100% no-repeat;
+          mask: var(--img) center / 100% 100% no-repeat;
+  background: linear-gradient(105deg, transparent 38%, rgba(255,250,235,.75) 50%, transparent 62%);
+  background-size: 260% 100%; background-position: 160% 0; background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  animation: brilho-passa 8s var(--ease) calc(var(--hit) + 1.6s) infinite;
+}
+.escudo--pp .escudo__brilho { animation-duration: 11s; animation-delay: calc(var(--hit) + 3s); }
+.escudo--pm .escudo__brilho { opacity: .55; animation-duration: 9s; animation-delay: calc(var(--hit) + 2s); }
+@keyframes brilho-passa {
+  0%        { background-position: 160% 0; }
+  32%, 100% { background-position: -60% 0; }
+}
+
+/* a sombra no chão: some na queda, encosta no choque e respira com a
+   flutuação (a mesma duração da flutuação de cada um) */
+.escudo__sombra {
+  position: absolute; left: 50%; bottom: -10%; z-index: 0;
+  width: 86%; height: 16%; border-radius: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(closest-side, rgba(0,0,0,.85), transparent);
+  opacity: 0;
+  animation:
+    sombra-encosta var(--cai-dur) var(--ease) calc(var(--hit) - var(--cai-dur)) forwards,
+    sombra-respira 4.8s ease-in-out calc(var(--hit) + .6s) infinite;
+}
+.escudo--pp .escudo__sombra { animation-duration: var(--cai-dur), 5.4s; }
+.escudo--pm .escudo__sombra { animation-duration: var(--cai-dur), 4.2s; }
+@keyframes sombra-encosta {
+  from { opacity: 0; transform: translateX(-50%) scale(2.2); }
+  to   { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+@keyframes sombra-respira {
+  0%, 100% { opacity: 1;   transform: translateX(-50%) scale(1); }
+  50%      { opacity: .55; transform: translateX(-50%) scale(.8); }
+}
+
+/* a onda de choque: um anel deitado no chão + um anel em volta do brasão */
+.escudo__onda {
+  position: absolute; left: 50%; bottom: -12%; z-index: 1; pointer-events: none;
+  width: 100%; height: 26%; border-radius: 50%;
+  border: 1px solid var(--gold-pale);
+  box-shadow: 0 0 18px rgba(240,220,176,.5), inset 0 0 12px rgba(240,220,176,.3);
+  transform: translateX(-50%) scale(.2); opacity: 0;
+  animation: onda-chao .9s cubic-bezier(.12,.7,.3,1) var(--hit) forwards;
+}
+.escudo__onda--anel {
+  bottom: auto; top: 50%; height: auto; aspect-ratio: 1;
+  border-color: rgba(224,135,79,.85);
+  transform: translate(-50%, -50%) scale(.4);
+  animation-name: onda-anel; animation-duration: .75s;
+}
+@keyframes onda-chao {
+  0%   { opacity: 1; transform: translateX(-50%) scale(.2); }
+  100% { opacity: 0; transform: translateX(-50%) scale(3.2); }
+}
+@keyframes onda-anel {
+  0%   { opacity: .9; transform: translate(-50%, -50%) scale(.4); }
+  100% { opacity: 0;  transform: translate(-50%, -50%) scale(2.1); }
+}
+
+/* a poeira levantada no choque */
+.escudo__poeira {
+  position: absolute; left: 50%; bottom: -14%; z-index: 0; pointer-events: none;
+  width: 150%; height: 40%; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(190,170,140,.35), rgba(120,105,90,.15) 50%, transparent);
+  filter: blur(8px);
+  transform: translateX(-50%) scale(.3); opacity: 0;
+  animation: poeira-sobe 1.6s var(--ease) var(--hit) forwards;
+}
+@keyframes poeira-sobe {
+  0%   { opacity: 0; transform: translateX(-50%) scale(.3, .3); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-30%) scale(1.5, 1.2); }
+}
+
+/* a rachadura de cada brasão: menor e girada diferente em cada um */
+.escudo .cena__racha--2 { z-index: 0; width: 330%; top: 62%; }
+.cena__racha--2 path { stroke-width: .5; }
+.cena__racha--2,
+.cena__racha--2 path { animation-delay: var(--impacto); }
+.cena__racha--2 .racha__aneis path { animation-delay: calc(var(--impacto) + .08s); }
+.escudo--pm .cena__racha--2 { transform: translate(-50%, -50%) rotate(24deg); }
+.escudo--pc .cena__racha--2 { transform: translate(-50%, -50%) rotate(-40deg) scale(.8); }
+.escudo--pp .cena__racha--2 { transform: translate(-50%, -50%) rotate(70deg) scale(-.8, .8); }
+
+/* ─── 4 · o carimbo APENAS 100 VAGAS ───
+   Chega grande e apagado e BATE inclinado no canto do PMPE, como carimbo
+   de papel. Borda dupla em brasa, a cor do "agora" nesta página. */
+.edital {
+  position: absolute; right: -33%; bottom: -5%; z-index: 6;
+  display: grid; justify-items: center; line-height: 1;
+  padding: 9px 16px 10px;
+  background: rgba(10,10,11,.78);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  border: 2px solid #E0874F;
+  outline: 1px solid rgba(224,135,79,.55); outline-offset: 3px;
+  color: #F2A06B; text-transform: uppercase; font-family: var(--font-title);
+  box-shadow: 0 0 30px -4px rgba(224,135,79,.55);
+  transform: rotate(-13deg); opacity: 0;
+  animation:
+    edital-bate .5s cubic-bezier(.5,0,.75,.2) calc(var(--impacto) + .55s) forwards,
+    edital-pulsa 2.6s var(--ease) calc(var(--impacto) + 1.2s) infinite;
+}
+.edital small { font-size: 9px; font-weight: 700; letter-spacing: 3px; color: #F0DCB0; }
+.edital b     { margin-top: 4px; font-size: clamp(12px, 1.55vw, 18px); font-weight: 800; letter-spacing: 2.5px; color: #F2A06B; }
+@keyframes edital-bate {
+  0%   { opacity: 0; transform: rotate(-4deg)  scale(3); filter: blur(6px); }
+  70%  { opacity: 1; transform: rotate(-13deg) scale(.92); filter: blur(0); }
+  85%  {             transform: rotate(-13deg) scale(1.04); }
+  100% { opacity: 1; transform: rotate(-13deg) scale(1); }
+}
+@keyframes edital-pulsa {
+  0%, 100% { box-shadow: 0 0 30px -4px rgba(224,135,79,.55); }
+  50%      { box-shadow: 0 0 44px 2px rgba(224,135,79,.8); }
+}
+
+/* ─── as faíscas (canvas do hero.js) ─── */
+.impacto-fx {
+  position: absolute; inset: -35% -15%; width: 130%; height: 170%;
+  z-index: 8; pointer-events: none;
+}
+
+/* ─── o tranco e o clarão — um em cada batida ───
+   Sem `backwards`: as quatro animações mexem no mesmo transform e só a
+   ativa vale. O clarão é QUENTE e contido — nada de tela branca. */
+.hero__inner {
+  position: relative; z-index: 4;
+  animation:
+    tranco .55s var(--ease) var(--t1),
+    tranco-leve .4s var(--ease) var(--b1),
+    tranco-leve .4s var(--ease) var(--b2),
+    tranco .5s var(--ease) var(--b3);
+}
+@keyframes tranco {
+  0%   { transform: none; }
+  8%   { transform: translate3d(-12px, 8px, 0) rotate(-.4deg); }
+  18%  { transform: translate3d(10px, -9px, 0) rotate(.35deg); }
+  30%  { transform: translate3d(-7px, -4px, 0); }
+  44%  { transform: translate3d(5px, 5px, 0); }
+  60%  { transform: translate3d(-3px, -2px, 0); }
+  100% { transform: none; }
+}
+@keyframes tranco-leve {
+  0%   { transform: none; }
+  15%  { transform: translate3d(0, 7px, 0); }
+  35%  { transform: translate3d(-5px, -3px, 0); }
+  60%  { transform: translate3d(3px, 2px, 0); }
+  100% { transform: none; }
+}
+.hero__flash {
+  position: absolute; inset: 0; z-index: 6; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at 50% 55%, rgba(255,190,120,.4), rgba(224,120,60,.1) 40%, transparent 72%);
+  animation:
+    clarao .45s var(--ease) var(--t1),
+    clarao-leve .3s var(--ease) var(--b1),
+    clarao-leve .3s var(--ease) var(--b2),
+    clarao .4s var(--ease) var(--b3);
+}
+@keyframes clarao      { 0% { opacity: 0; } 15% { opacity: .55; } 100% { opacity: 0; } }
+@keyframes clarao-leve { 0% { opacity: 0; } 15% { opacity: .3; }  100% { opacity: 0; } }
+
+/* ─── pular a abertura ───
+   Pequeno, no canto da cena, e some quando ela acaba. */
+.pular {
+  position: absolute; right: 0; bottom: 0; z-index: 9;
+  padding: 8px 4px; border: 0; background: none; cursor: pointer;
+  font: 700 11px var(--font-ui); letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-mute);
+  transition: color var(--t), opacity .4s var(--ease);
+}
+.pular:hover { color: var(--gold-light); }
+.pular:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+.pular[hidden] { display: none; }
+
+/* ─── RESERVA: a cratera desenhada em CSS ───
+   Só aparece se a arte não carregar (.cratera-reserva, pelo hero.js):
+   o buraco no formato da logo, em baixo-relevo, com luz vinda de cima. */
+.cratera > span, .cratera > .cratera__declive { display: none; }
+.cratera-reserva .cratera__art { display: none; }
+.cratera-reserva .cratera > span, .cratera-reserva .cratera > .cratera__declive { display: block; }
+.cratera-reserva .cratera { opacity: .5 !important; }
+.cratera > span {
+  position: absolute; inset: 0;
+  -webkit-mask: url("public/emblema-leao.webp") center / contain no-repeat;
+          mask: url("public/emblema-leao.webp") center / contain no-repeat;
+  --fundura: clamp(4px, calc(var(--wc) * .036), 9px);
+}
+.cratera > .cratera__declive { position: absolute; inset: 0; filter: blur(14px); }
+.cratera__declive span {
+  position: absolute; inset: 0; transform: scale(1.12) translateY(2%);
+  background: radial-gradient(70% 70% at 50% 40%, rgba(0,0,0,.92), rgba(0,0,0,.7));
+  -webkit-mask: url("public/emblema-leao.webp") center / contain no-repeat;
+          mask: url("public/emblema-leao.webp") center / contain no-repeat;
+}
+.cratera__labio {
+  transform: scale(1.03);
+  background: linear-gradient(180deg, rgba(255,236,196,.8), rgba(201,174,122,.45) 45%, rgba(120,90,50,.5));
+}
+.cratera__parede {
+  background: linear-gradient(180deg, rgba(175,146,86,.85), rgba(225,195,135,1) 70%, rgba(255,240,205,1));
+}
+.cratera > .cratera__fundo {
+  background:
+    radial-gradient(80% 50% at 50% 8%, rgba(0,0,0,.9), transparent 70%),
+    radial-gradient(70% 60% at 50% 62%, #16110d, #050405 80%);
+  -webkit-mask:
+    url("public/emblema-leao.webp") center / contain no-repeat,
+    url("public/emblema-leao.webp") 50% calc(50% - var(--fundura)) / contain no-repeat;
+  -webkit-mask-composite: source-in;
+          mask:
+    url("public/emblema-leao.webp") center / contain no-repeat,
+    url("public/emblema-leao.webp") 50% calc(50% - var(--fundura)) / contain no-repeat;
+          mask-composite: intersect;
+}
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+@media (max-width: 720px) {
+  .hero { --cw: calc(var(--wc) * 2.5); }
+  .palco { height: calc(var(--wc) * 2.65); margin-top: 12px; }
+  .marco { top: 43%; }
+  .escudo { top: 54%; }
+  .cratera__art { width: 225%; }
+  .edital { right: -25%; bottom: -14%; padding: 5px 9px 6px; outline-offset: 2px; }
+  .edital small { font-size: 8.5px; }
+  .edital b { margin-top: 2px; font-size: 12.5px; letter-spacing: 1.5px; }
+  /* no celular o tranco é menor: a tela é pequena e o dedo está nela */
+  .hero__inner {
+    animation:
+      tranco-leve .5s var(--ease) var(--t1),
+      tranco-leve .35s var(--ease) var(--b1),
+      tranco-leve .35s var(--ease) var(--b2),
+      tranco-leve .45s var(--ease) var(--b3);
+  }
+  @keyframes palco-afunda {
+    0%   { transform: scale(1); }
+    12%  { transform: scale(.97,.94); }
+    32%  { transform: scale(1.01,1.02); }
+    100% { transform: scale(1); }
+  }
+}
+
+/* =========================================================
+   MOVIMENTO REDUZIDO — a cena já pronta: a cratera fria e
+   apagada, os três brasões no lugar, sem queda, sem meteoro
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .meteoro, .fumaca, .escudo__onda, .escudo__poeira, .escudo__brilho,
+  .cena__racha, .hero__flash, .impacto-fx, .impacto-aura, .impacto-bacia,
+  .cratera__calor, .pular { display: none; }
+  .palco, .hero__inner { animation: none !important; }
+  .cratera, .escudo__corpo, .escudo__sombra, .escudo__halo { opacity: 1 !important; }
+  .escudo__corpo { transform: none !important; filter: none !important; }
+  .cratera__art { animation: none; opacity: .3; filter: brightness(.55) saturate(.4); }
+  .edital { opacity: 1 !important; transform: rotate(-13deg) !important; }
+}

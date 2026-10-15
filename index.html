@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+  <!-- Google Tag Manager (mesmo container das demais landings do CPPEM).
+       Precisa ser o primeiro script do <head> — é ele que carrega a PixelX. -->
+  <script>(function (w, d, s, l) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+          new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '?l=' + l : ''; j.async = true; j.src =
+          'https://sgtm.cppem.com.br/metrics/' + dl; f.parentNode.insertBefore(j, f);
+    })
+      (window, document, 'script', 'dataLayer');</script>
+  <!-- End Google Tag Manager -->
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Simuladão PM, PC e PPPE — 08/11 na sede do CPPEM | CPPEM</title>
+  <meta name="description"
+    content="Simuladão presencial do CPPEM para os concursos da PMPE, PCPE e Polícia Penal de Pernambuco: 8 de novembro, na sede do CPPEM. Clima de prova real, de R$ 69,90 por R$ 30. Apenas 100 vagas.">
+
+  <link rel="icon" href="public/favicon.ico" sizes="48x48">
+  <link rel="icon" href="public/favicon-192.png" type="image/png" sizes="192x192">
+  <link rel="icon" href="public/favicon-512.png" type="image/png" sizes="512x512">
+  <link rel="apple-touch-icon" href="public/favicon-192.png">
+
+  <!-- Open Graph: sem estas tags, WhatsApp e Instagram montam o preview por conta
+     própria — sem imagem e com o texto que encontrarem.
+     ⚠️ Falta: og:url (domínio final) e uma imagem própria do Simuladão. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="CPPEM Concursos Públicos">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:title" content="Simuladão PM, PC e PPPE — 08/11 na sede do CPPEM">
+  <meta property="og:description"
+    content="Uma prova completa em clima de prova real para PMPE, PCPE e Polícia Penal. De R$ 69,90 por R$ 30 · apenas 100 vagas.">
+  <meta property="og:image" content="public/bgatirador.webp">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700;800&family=Rajdhani:wght@500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- O leão e os três brasões são a entrada da hero: sem o preload eles só
+     começam a baixar depois do CSS e a batida acontece num quadro vazio. -->
+  <link rel="preload" as="image" href="public/emblema-leao.webp">
+  <link rel="preload" as="image" href="public/brasao-pmpe.webp">
+  <link rel="preload" as="image" href="public/brasao-pcpe.webp">
+  <link rel="preload" as="image" href="public/brasao-pppe.webp">
+
+  <!-- a cratera: a versão leve no celular (aparece a 30% de opacidade,
+     a resolução cheia não faria diferença lá) -->
+  <link rel="preload" as="image" href="public/cppem-crater-900.webp" media="(max-width: 720px)">
+  <link rel="preload" as="image" href="public/cppem-crater.webp" media="(min-width: 721px)">
+
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="hero.css">
+
+  <!-- A cena da hero espera as imagens (hero.js). Se o JS falhar, ela
+     começa sozinha em 2,5s — a página nunca fica presa. -->
+  <script>
+    document.documentElement.classList.add('intro-pending');
+    window.setTimeout(function () { document.documentElement.classList.remove('intro-pending'); }, 2500);
+  </script>
+</head>
+
+<body>
+
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://sgtm.cppem.com.br/metrics/ns.html" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
+
+  <!-- Camadas globais da página -->
+  <div class="progress" id="progress" aria-hidden="true"></div>
+  <canvas class="brasas" id="brasas" aria-hidden="true"></canvas>
+
+  <!-- ================= HEADER ================= -->
+  <header class="header" id="header">
+    <div class="header__inner">
+      <a class="brand" href="#topo" aria-label="CPPEM — início">
+        <span class="brand__leao">
+          <img src="public/emblema-leao.webp" alt="CPPEM Concursos Públicos" width="400" height="465">
+        </span>
+        <span class="brand__nome">CPPEM<i>Concursos Públicos</i></span>
+      </a>
+
+      <nav class="nav" aria-label="Seções da página">
+        <a href="#formato">O simuladão</a>
+        <a href="#provas">Para quem é</a>
+        <a href="#onde">Onde e quando</a>
+        <a href="#ingressos">Ingresso</a>
+        <a href="#faq">Dúvidas</a>
+      </nav>
+
+      <span class="opsel">
+        <i aria-hidden="true"></i>
+        <b>Simuladão</b>
+        <span>08/11</span>
+      </span>
+
+      <a class="btn btn--gold shine" data-cta href="#ingressos">
+        <span>Garantir vaga</span>
+      </a>
+    </div>
+
+    <!-- A faixa de alerta: presa embaixo do header, acompanha a rolagem.
+         Alterna as mensagens (script.js) e leva ao ingresso.
+         Nasce escondida e só aparece com venda aberta. -->
+    <a class="alerta" href="#ingressos" data-cta data-alerta hidden>
+      <i aria-hidden="true"></i>
+      <b data-alerta-txt>Vendas abertas!</b>
+      <span class="alerta__ir" aria-hidden="true">Garantir vaga →</span>
+    </a>
+  </header>
+
+  <main>
+
+    <!-- =========================================================
+     HERO — a cena de entrada está descrita no .palco, logo abaixo.
+     ========================================================= -->
+    <section class="hero" id="topo">
+      <div class="hero__bg" aria-hidden="true"><i></i></div>
+      <div class="hero__veil" aria-hidden="true"></div>
+      <div class="hero__grid" aria-hidden="true"></div>
+      <div class="hero__scan" aria-hidden="true"></div>
+      <div class="hero__dawn" aria-hidden="true"></div>
+      <div class="hero__flash" aria-hidden="true"></div>
+
+      <div class="container hero__inner">
+        <span class="tag anim d1">
+          <i class="dot" aria-hidden="true"></i>
+          <span>08/11 · Sede CPPEM · Apenas 100 vagas</span>
+        </span>
+
+        <h1 class="hero__title anim d2">
+          <span class="hero__desig">Simuladão de concursos</span>
+          <span class="luz">PM · PC · PPPE</span>
+        </h1>
+
+        <!-- =====================================================
+         O PALCO — o "mini vídeo" de entrada (hero.css + hero.js)
+           1. o leão do CPPEM cai como meteoro, racha a tela e vira
+              a cratera, que esfria e fica apagada e parada no fundo;
+           2. PCPE bate à esquerda, PPPE à direita e o PMPE por
+              último no centro, com faíscas, poeira e onda de choque;
+           3. o carimbo "APENAS 100 VAGAS" bate no PMPE.
+         O texto e os botões da hero não esperam: entram logo depois
+         do impacto do meteoro.
+         ===================================================== -->
+        <div class="palco" id="palco">
+          <canvas class="impacto-fx" id="impactoFx" aria-hidden="true"></canvas>
+          <div class="impacto-aura" aria-hidden="true"></div>
+          <div class="impacto-bacia" aria-hidden="true"></div>
+          <div class="marco" aria-hidden="true">
+            <svg class="cena__racha" viewBox="-100 -100 200 200" aria-hidden="true" focusable="false">
+            <g class="racha__raios">
+              <path pathLength="1" d="M0 0 L14 -9 L22 -8 L35 -19 L52 -22 L70 -37 L96 -44" />
+              <path pathLength="1" d="M0 0 L16 4 L30 2 L44 12 L63 13 L80 24 L98 27" />
+              <path pathLength="1" d="M0 0 L6 15 L9 30 L20 44 L22 62 L34 80 L38 98" />
+              <path pathLength="1" d="M0 0 L-8 13 L-10 27 L-22 38 L-26 57 L-40 70 L-47 95" />
+              <path pathLength="1" d="M0 0 L-15 5 L-28 1 L-42 10 L-60 8 L-75 19 L-97 18" />
+              <path pathLength="1" d="M0 0 L-12 -10 L-20 -24 L-36 -30 L-44 -48 L-62 -58 L-72 -90" />
+              <path pathLength="1" d="M0 0 L2 -16 L-4 -30 L4 -46 L0 -64 L8 -82 L4 -99" />
+              <path pathLength="1" d="M0 0 L10 -14 L24 -30 L30 -52 L46 -66 L58 -88" />
+              <path pathLength="1" d="M0 0 L-6 -4 L-20 -8 L-34 -14 L-52 -20 L-80 -26" />
+            </g>
+            <g class="racha__aneis">
+              <path pathLength="1" d="M35 -19 L44 12 L30 2" />
+              <path pathLength="1" d="M44 12 L20 44 L-10 27" />
+              <path pathLength="1" d="M-22 38 L-42 10 L-34 -14" />
+              <path pathLength="1" d="M-36 -30 L-4 -30 L24 -30" />
+              <path pathLength="1" d="M63 13 L34 80" />
+              <path pathLength="1" d="M-60 8 L-40 70" />
+              <path pathLength="1" d="M-62 -58 L0 -64 L46 -66" />
+            </g>
+          </svg>
+            <div class="cratera">
+              <picture>
+                <source media="(max-width: 720px)" srcset="public/cppem-crater-900.webp">
+                <img class="cratera__art" src="public/cppem-crater.webp" alt="" width="1672" height="940">
+              </picture>
+              <span class="cratera__calor"></span>
+              <!-- reserva em CSS, só se a arte não carregar -->
+              <span class="cratera__queimado"></span>
+              <span class="cratera__amassado"></span>
+              <div class="cratera__declive"><span></span></div>
+              <span class="cratera__labio"></span>
+              <span class="cratera__parede"></span>
+              <span class="cratera__fundo"></span>
+            </div>
+            <div class="fumaca"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="meteoro" id="meteoro">
+              <span class="meteoro__cauda"></span>
+              <img src="public/emblema-leao.webp" alt="" width="400" height="465">
+            </div>
+          </div>
+          <div class="escudo escudo--pc">
+            <svg class="cena__racha cena__racha--2" viewBox="-100 -100 200 200" aria-hidden="true" focusable="false">
+            <g class="racha__raios">
+              <path pathLength="1" d="M0 0 L12 -6 L26 -14 L40 -12 L58 -28 L84 -34" />
+              <path pathLength="1" d="M0 0 L10 10 L24 14 L34 30 L52 38 L70 60" />
+              <path pathLength="1" d="M0 0 L-4 14 L-14 26 L-12 44 L-24 62 L-26 86" />
+              <path pathLength="1" d="M0 0 L-14 -2 L-26 -12 L-44 -10 L-58 -24 L-86 -30" />
+              <path pathLength="1" d="M0 0 L-2 -14 L6 -28 L2 -46 L10 -66 L6 -88" />
+              <path pathLength="1" d="M0 0 L-12 8 L-30 12 L-44 26 L-66 30" />
+            </g>
+            <g class="racha__aneis">
+              <path pathLength="1" d="M26 -14 L24 14 L-4 14" />
+              <path pathLength="1" d="M-14 26 L-30 12 L-26 -12 L6 -28 L26 -14" />
+              <path pathLength="1" d="M40 -12 L34 30" />
+            </g>
+          </svg>
+            <span class="escudo__sombra" aria-hidden="true"></span>
+            <span class="escudo__onda" aria-hidden="true"></span>
+            <span class="escudo__onda escudo__onda--anel" aria-hidden="true"></span>
+            <span class="escudo__poeira" aria-hidden="true"></span>
+            <div class="escudo__corpo" data-escudo>
+              <span class="escudo__halo" aria-hidden="true"></span>
+              <img src="public/brasao-pcpe.webp" alt="Brasão da Polícia Civil de Pernambuco" width="326" height="454">
+              <i class="escudo__brilho" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="escudo escudo--pp">
+            <svg class="cena__racha cena__racha--2" viewBox="-100 -100 200 200" aria-hidden="true" focusable="false">
+            <g class="racha__raios">
+              <path pathLength="1" d="M0 0 L12 -6 L26 -14 L40 -12 L58 -28 L84 -34" />
+              <path pathLength="1" d="M0 0 L10 10 L24 14 L34 30 L52 38 L70 60" />
+              <path pathLength="1" d="M0 0 L-4 14 L-14 26 L-12 44 L-24 62 L-26 86" />
+              <path pathLength="1" d="M0 0 L-14 -2 L-26 -12 L-44 -10 L-58 -24 L-86 -30" />
+              <path pathLength="1" d="M0 0 L-2 -14 L6 -28 L2 -46 L10 -66 L6 -88" />
+              <path pathLength="1" d="M0 0 L-12 8 L-30 12 L-44 26 L-66 30" />
+            </g>
+            <g class="racha__aneis">
+              <path pathLength="1" d="M26 -14 L24 14 L-4 14" />
+              <path pathLength="1" d="M-14 26 L-30 12 L-26 -12 L6 -28 L26 -14" />
+              <path pathLength="1" d="M40 -12 L34 30" />
+            </g>
+          </svg>
+            <span class="escudo__sombra" aria-hidden="true"></span>
+            <span class="escudo__onda" aria-hidden="true"></span>
+            <span class="escudo__onda escudo__onda--anel" aria-hidden="true"></span>
+            <span class="escudo__poeira" aria-hidden="true"></span>
+            <div class="escudo__corpo" data-escudo>
+              <span class="escudo__halo" aria-hidden="true"></span>
+              <img src="public/brasao-pppe.webp" alt="Brasão da Polícia Penal de Pernambuco" width="305" height="395">
+              <i class="escudo__brilho" aria-hidden="true"></i>
+            </div>
+          </div>
+          <div class="escudo escudo--pm">
+            <svg class="cena__racha cena__racha--2" viewBox="-100 -100 200 200" aria-hidden="true" focusable="false">
+            <g class="racha__raios">
+              <path pathLength="1" d="M0 0 L12 -6 L26 -14 L40 -12 L58 -28 L84 -34" />
+              <path pathLength="1" d="M0 0 L10 10 L24 14 L34 30 L52 38 L70 60" />
+              <path pathLength="1" d="M0 0 L-4 14 L-14 26 L-12 44 L-24 62 L-26 86" />
+              <path pathLength="1" d="M0 0 L-14 -2 L-26 -12 L-44 -10 L-58 -24 L-86 -30" />
+              <path pathLength="1" d="M0 0 L-2 -14 L6 -28 L2 -46 L10 -66 L6 -88" />
+              <path pathLength="1" d="M0 0 L-12 8 L-30 12 L-44 26 L-66 30" />
+            </g>
+            <g class="racha__aneis">
+              <path pathLength="1" d="M26 -14 L24 14 L-4 14" />
+              <path pathLength="1" d="M-14 26 L-30 12 L-26 -12 L6 -28 L26 -14" />
+              <path pathLength="1" d="M40 -12 L34 30" />
+            </g>
+          </svg>
+            <span class="escudo__sombra" aria-hidden="true"></span>
+            <span class="escudo__onda" aria-hidden="true"></span>
+            <span class="escudo__onda escudo__onda--anel" aria-hidden="true"></span>
+            <span class="escudo__poeira" aria-hidden="true"></span>
+            <div class="escudo__corpo" data-escudo>
+              <span class="escudo__halo" aria-hidden="true"></span>
+              <img src="public/brasao-pmpe.webp" alt="Brasão da Polícia Militar de Pernambuco" width="357" height="419">
+              <i class="escudo__brilho" aria-hidden="true"></i>
+            </div>
+            <span class="edital" id="editalCarimbo"><small>Apenas</small><b>100 vagas</b></span>
+          </div>
+          <button class="pular" type="button" id="pular" hidden>Pular ›</button>
+        </div>
+
+        <p class="hero__sub anim d4">
+          <strong>Uma prova completa, em clima de prova real.</strong> O Simuladão do CPPEM é para quem vai
+          encarar os concursos da <strong>Polícia Militar</strong>, da <strong>Polícia Civil</strong> e da
+          <strong>Polícia Penal de Pernambuco</strong> — e quer testar o preparo antes do dia que vale.
+        </p>
+
+        <div class="hero__cta anim d5">
+          <a class="btn btn--gold btn--lg shine" data-cta href="#ingressos">
+            <span>Quero minha vaga · R$ 30</span>
+          </a>
+          <a class="btn btn--ghost btn--lg" href="#formato"><span>Como funciona</span></a>
+        </div>
+
+        <a class="urgente anim d5" href="#ingressos">
+          <i aria-hidden="true"></i>
+          <span data-urgencia>De <s>R$ 69,90</s> por R$ 30 — só 100 vagas, em lote único.</span>
+        </a>
+
+        <!-- Some sozinho quando o dia 08/11 chega (script.js). -->
+        <div class="hero__relogio anim d5" data-relogio-bloco>
+          <em>Faltam</em>
+          <div class="relogio" data-relogio>
+            <span><b data-cd="d">00</b><small>dias</small></span>
+            <span><b data-cd="h">00</b><small>horas</small></span>
+            <span><b data-cd="m">00</b><small>min</small></span>
+            <span><b data-cd="s">00</b><small>seg</small></span>
+          </div>
+        </div>
+
+        <div class="ficha anim d5">
+          <div class="ficha__item"><b>08/11</b><span>Domingo</span></div>
+          <div class="ficha__item"><b>SEDE</b><span>CPPEM</span></div>
+          <div class="ficha__item"><b>R$ 30</b><span>Era <s>R$ 69,90</s></span></div>
+          <div class="ficha__item"><b>100</b><span>Vagas apenas</span></div>
+        </div>
+      </div>
+
+      <div class="scroller" aria-hidden="true"><i></i></div>
+    </section>
+
+    <!-- ================= FITA DE URGÊNCIA ================= -->
+    <div class="strip strip--fita" aria-hidden="true">
+      <div class="strip__track">
+        <span>Simuladão</span><span>PMPE · PCPE · PPPE</span><span>08/11 · Sede CPPEM</span><span>Clima de prova real</span><span>De R$ 69,90 por R$ 30</span><span>Apenas 100 vagas</span>
+        <span>Simuladão</span><span>PMPE · PCPE · PPPE</span><span>08/11 · Sede CPPEM</span><span>Clima de prova real</span><span>De R$ 69,90 por R$ 30</span><span>Apenas 100 vagas</span>
+      </div>
+    </div>
+
+    <!-- =========================================================
+     O FORMATO
+     ---------------------------------------------------------
+     ⚠️ Os pilares descrevem o formato padrão de simulado presencial.
+     Confirme com a equipe (duração, gabarito/correção) antes de publicar
+     e acrescente o que for confirmado.
+     ========================================================= -->
+    <section class="section" id="formato" aria-labelledby="formato-title">
+      <div class="container">
+        <div class="section__head">
+          <span class="eyebrow">O simuladão</span>
+          <h2 class="section__title" id="formato-title">Estudar é uma coisa.<br><span class="gold">Fazer a prova é outra.</span></h2>
+          <p class="section__lead">
+            Muita gente sabe o conteúdo e perde pontos no tempo, no nervosismo e na estratégia. O
+            <strong>Simuladão</strong> coloca você sentado, de caneta na mão, diante de uma prova completa —
+            na <strong>sede do CPPEM</strong>, do jeito que vai ser no dia.
+          </p>
+        </div>
+
+        <div class="pilares">
+          <div class="pilar">
+            <span class="pilar__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M5 3h11l3 3v15H5z" />
+                <path d="M8.5 10.5l1.8 1.8 3.4-3.4" />
+                <path d="M8.5 16h7" />
+              </svg>
+            </span>
+            <h3>Prova completa</h3>
+            <p>Questões no estilo da banca, cobrindo o conteúdo que cai nos concursos policiais de PE.</p>
+          </div>
+          <div class="pilar">
+            <span class="pilar__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="13" r="8" />
+                <path d="M12 9v4l2.5 2.5M9 2h6" />
+              </svg>
+            </span>
+            <h3>Contra o relógio</h3>
+            <p>Tempo de prova cronometrado: você descobre seu ritmo antes que ele custe uma vaga.</p>
+          </div>
+          <div class="pilar">
+            <span class="pilar__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z" />
+                <path d="M9 12l2 2 4-4" />
+              </svg>
+            </span>
+            <h3>Clima de prova real</h3>
+            <p>Sala de prova, silêncio e cartão-resposta. O nervosismo fica aqui, não no dia que vale.</p>
+          </div>
+          <div class="pilar">
+            <span class="pilar__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 21V5l8-3 8 3v16" />
+                <path d="M9 21v-4h6v4M8 8h2M14 8h2M8 12h2M14 12h2" />
+              </svg>
+            </span>
+            <h3>Na sede do CPPEM</h3>
+            <p>Presencial, com apenas 100 vagas. Turma enxuta, foco do começo ao fim.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PARA QUEM É ================= -->
+    <section class="section section--alt" id="provas" aria-labelledby="provas-title">
+      <div class="container">
+        <div class="section__head">
+          <span class="eyebrow">Para quem é</span>
+          <h2 class="section__title" id="provas-title">Três concursos. <span class="gold">Um simuladão.</span></h2>
+          <p class="section__lead">
+            Feito para quem está na corrida por uma vaga nas forças de segurança de Pernambuco.
+          </p>
+        </div>
+
+        <div class="materias provas">
+          <div class="materia">
+            <span class="tema__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z" />
+                <path d="M12 8l1.2 2.4 2.6.4-1.9 1.8.5 2.6L12 14l-2.4 1.2.5-2.6-1.9-1.8 2.6-.4z" />
+              </svg>
+            </span>
+            <b>PMPE<small>Polícia Militar de Pernambuco</small></b>
+          </div>
+          <div class="materia">
+            <span class="tema__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="10.5" cy="10.5" r="6" />
+                <path d="M15 15l5.5 5.5" />
+              </svg>
+            </span>
+            <b>PCPE<small>Polícia Civil de Pernambuco</small></b>
+          </div>
+          <div class="materia">
+            <span class="tema__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="4" y="4" width="16" height="16" rx="1" />
+                <path d="M8 4v16M12 4v16M16 4v16" />
+              </svg>
+            </span>
+            <b>PPPE<small>Polícia Penal de Pernambuco</small></b>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ONDE E QUANDO ================= -->
+    <section class="section" id="onde" aria-labelledby="onde-title">
+      <div class="container">
+        <div class="section__head">
+          <span class="eyebrow">Onde e quando</span>
+          <h2 class="section__title" id="onde-title">Anote na <span class="gold">agenda</span></h2>
+        </div>
+
+        <div class="ficha-evento">
+          <div class="info">
+            <span class="info__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="16" rx="1" />
+                <path d="M3 10h18M8 3v4M16 3v4" />
+              </svg>
+            </span>
+            <span class="info__cab">Data</span>
+            <b class="info__val">8 de novembro</b>
+            <span class="info__sub">Domingo</span>
+          </div>
+          <div class="info">
+            <span class="info__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" />
+                <circle cx="12" cy="9.5" r="2.5" />
+              </svg>
+            </span>
+            <span class="info__cab">Local</span>
+            <b class="info__val">Sede CPPEM</b>
+            <span class="info__sub">Presencial</span>
+          </div>
+          <div class="info">
+            <span class="info__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M3 9a2 2 0 0 0 0 4v5h18v-5a2 2 0 0 0 0-4V5H3z" />
+                <path d="M14 5v13" stroke-dasharray="2 2" />
+              </svg>
+            </span>
+            <span class="info__cab">Ingresso</span>
+            <b class="info__val">R$ 30</b>
+            <span class="info__sub">Era <s>R$ 69,90</s> · 57% off · 100 vagas</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+     INGRESSO
+     ---------------------------------------------------------
+     Lote único, só o ingresso comum. Preço e link moram no CONFIG do
+     script.js. O botão leva direto ao checkout (com as UTMs da visita).
+     ========================================================= -->
+    <section class="section section--alt" id="ingressos" aria-labelledby="ing-title">
+      <div class="container">
+        <div class="section__head">
+          <span class="eyebrow">Vendas abertas</span>
+          <h2 class="section__title" id="ing-title">São só 100 cadeiras. <span class="gold">Garanta a sua.</span></h2>
+          <p class="section__lead">
+            O ingresso era <strong>R$ 69,90</strong> e agora sai por <strong>R$ 30</strong> — 57% a menos,
+            em <strong>lote único</strong>. Quando as <strong>100 vagas</strong> acabarem, as vendas fecham.
+          </p>
+        </div>
+
+        <div class="planos planos--unico">
+          <div class="plano-vip">
+            <article class="plano plano--vip">
+              <span class="plano__selo"><i aria-hidden="true"></i>Lote único</span>
+              <header class="plano__head">
+                <span class="plano__tag">Apenas 100 vagas</span>
+                <h3 class="plano__nome">Ingresso Simuladão</h3>
+                <p class="plano__desc">Seu lugar no Simuladão PM, PC e PPPE.</p>
+              </header>
+              <ul class="plano__lista">
+                <li class="plano__destaque"><b>Prova completa</b> em clima de prova real</li>
+                <li>Questões no estilo da banca</li>
+                <li>Para PMPE, PCPE e Polícia Penal de Pernambuco</li>
+                <li>Domingo, 08/11, na sede do CPPEM</li>
+              </ul>
+              <div class="plano__rodape">
+                <div class="plano__preco">
+                  <span class="plano__preco-label">Ingresso</span>
+                  <!-- "de R$ X" riscado + desconto: só aparece se o CONFIG tiver precoDe -->
+                  <span class="plano__de" data-ingresso-de="comum" hidden>de <s></s> <em></em></span>
+                  <b data-ingresso-preco="comum">Vendas abertas</b>
+                  <span class="plano__avista" data-ingresso-avista="comum" hidden>no cartão · ou <strong></strong> à
+                    vista</span>
+                  <span class="plano__preco-nota">Lote único — quando acabar, acabou</span>
+                </div>
+                <a class="btn btn--gold btn--lg btn--block shine" data-compra="comum"
+                  href="https://checkout.cppem.com.br/pay/simulado-concursos-pernambuco-pm-pc-pp">
+                  <span>Quero minha vaga</span>
+                </a>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <p class="planos__seguro">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="1" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+          Pagamento pelo checkout oficial e seguro do CPPEM
+        </p>
+      </div>
+    </section>
+
+    <!-- ================= FAQ ================= -->
+    <section class="section" id="faq" aria-labelledby="faq-title">
+      <div class="container">
+        <div class="section__head">
+          <span class="eyebrow">Antes de decidir</span>
+          <h2 class="section__title" id="faq-title">Dúvidas <span class="gold">frequentes</span></h2>
+        </div>
+
+        <div class="faq">
+          <details class="faq__item">
+            <summary>Onde e quando vai ser o Simuladão?</summary>
+            <p>
+              Na <strong>sede do CPPEM</strong>, no domingo, <strong>8 de novembro</strong>. O horário de
+              chegada é informado pela equipe do CPPEM após a inscrição.
+            </p>
+          </details>
+          <details class="faq__item">
+            <summary>Para quais concursos é o simulado?</summary>
+            <p>
+              Para quem vai prestar os concursos da <strong>Polícia Militar (PMPE)</strong>, da
+              <strong>Polícia Civil (PCPE)</strong> e da <strong>Polícia Penal de Pernambuco (PPPE)</strong>.
+            </p>
+          </details>
+          <details class="faq__item">
+            <summary>Quanto custa?</summary>
+            <p>
+              O ingresso era <strong>R$ 69,90</strong> e está saindo por <strong>R$ 30</strong>, em
+              <strong>lote único</strong>. Há um só tipo de ingresso, e esse preço vale até as vagas acabarem.
+            </p>
+          </details>
+          <details class="faq__item">
+            <summary>Quantas vagas são?</summary>
+            <p>
+              Apenas <strong>100 vagas</strong>. Quando elas acabarem, as vendas são encerradas.
+            </p>
+          </details>
+          <details class="faq__item">
+            <summary>Como faço a inscrição?</summary>
+            <p>
+              Clique em <strong>“Quero minha vaga”</strong> e você é levado direto ao
+              <strong>checkout oficial do CPPEM</strong> para o pagamento.
+            </p>
+          </details>
+          <details class="faq__item">
+            <summary>Tenho outra dúvida. Com quem falo?</summary>
+            <p>
+              Com a equipe do CPPEM no <strong>WhatsApp</strong>, pelo botão verde no canto da tela.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CTA FINAL ================= -->
+    <section class="final">
+      <div class="final__marca" aria-hidden="true"></div>
+      <div class="container final__inner">
+        <div class="selo">
+          <span class="selo__aro" aria-hidden="true"></span>
+          <span class="selo__core">
+            <img src="public/emblema-leao.webp" alt="" width="400" height="465" loading="lazy">
+          </span>
+        </div>
+
+        <h2>Antes da prova que vale,<br>faça a <span class="gold">prova de teste.</span></h2>
+        <p>
+          Descubra onde você está, ajuste o ritmo e chegue no dia da prova da <strong>PMPE</strong>,
+          <strong>PCPE</strong> ou <strong>PPPE</strong> sabendo exatamente o que esperar.
+        </p>
+
+        <a class="btn btn--gold btn--lg shine" data-cta href="#ingressos">
+          <span>Garantir minha vaga</span>
+        </a>
+        <span class="final__note">08/11 · Sede CPPEM · de R$ 69,90 por R$ 30 · apenas 100 vagas</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <span class="footer__leao">
+          <img src="public/emblema-leao.webp" alt="CPPEM Concursos Públicos" width="400" height="465" loading="lazy">
+        </span>
+        <p>&ldquo;Seu sonho é o nosso principal objetivo.&rdquo;</p>
+        <div class="footer__social">
+          <a href="https://wa.me/558173105354" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
+            </svg>
+          </a>
+          <a href="https://www.instagram.com/cppemconcursos/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9s.7.8.9 1.4c.1.4.3 1 .4 2.2 0 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4s-.8.7-1.4.9c-.4.1-1 .3-2.2.4-1.3 0-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4a3.8 3.8 0 0 1-1.4-.9 3.8 3.8 0 0 1-.9-1.4c-.1-.4-.3-1-.4-2.2 0-1.3-.1-1.7-.1-4.9s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4s.8-.7 1.4-.9c.4-.1 1-.3 2.2-.4 1.3 0 1.7-.1 4.9-.1zM12 0C8.7 0 8.3 0 7 .1 5.7.1 4.8.3 4.1.6c-.8.3-1.4.7-2 1.4-.7.6-1.1 1.2-1.4 2C.3 4.7.1 5.6.1 6.9 0 8.2 0 8.6 0 12s0 3.8.1 5.1c0 1.3.2 2.2.5 2.9.3.8.7 1.4 1.4 2 .6.7 1.2 1.1 2 1.4.7.3 1.6.5 2.9.5 1.3.1 1.7.1 5.1.1s3.8 0 5.1-.1c1.3 0 2.2-.2 2.9-.5.8-.3 1.4-.7 2-1.4.7-.6 1.1-1.2 1.4-2 .3-.7.5-1.6.5-2.9.1-1.3.1-1.7.1-5.1s0-3.8-.1-5.1c0-1.3-.2-2.2-.5-2.9-.3-.8-.7-1.4-1.4-2-.6-.7-1.2-1.1-2-1.4-.7-.3-1.6-.5-2.9-.5C15.8 0 15.4 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zm0 10.2a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-10.4a1.4 1.4 0 1 1-2.9 0 1.4 1.4 0 0 1 2.9 0z" />
+            </svg>
+          </a>
+          <a href="https://www.tiktok.com/@cppemconcursos" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M16.6 5.8a4.3 4.3 0 0 1-1-2.8h-3.3v13.2a2.4 2.4 0 1 1-2.4-2.4c.2 0 .5 0 .7.1v-3.3a5.7 5.7 0 1 0 5 5.7V9.7a7.6 7.6 0 0 0 4.4 1.4V7.8a4.3 4.3 0 0 1-3.4-2z" />
+            </svg>
+          </a>
+          <a href="https://www.youtube.com/@cppemconcursos" target="_blank" rel="noopener" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M23.5 6.5a3 3 0 0 0-2.1-2.1C19.5 3.9 12 3.9 12 3.9s-7.5 0-9.4.5A3 3 0 0 0 .5 6.5C0 8.4 0 12 0 12s0 3.6.5 5.5a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.5.5-5.5s0-3.6-.5-5.5zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <nav class="footer__col" aria-label="Simuladão">
+        <h4>Simuladão</h4>
+        <a href="#formato">O simuladão</a>
+        <a href="#provas">Para quem é</a>
+        <a href="#onde">Onde e quando</a>
+        <a href="#ingressos">Ingresso</a>
+      </nav>
+
+      <nav class="footer__col" aria-label="Cursos">
+        <h4>Cursos</h4>
+        <a href="https://cppem.com.br/turmas" target="_blank" rel="noopener">Turmas</a>
+        <a href="https://unicive.cppem.com.br" target="_blank" rel="noopener">Faculdade EAD</a>
+        <a href="https://loja.cppem.com.br" target="_blank" rel="noopener">Loja</a>
+      </nav>
+
+      <nav class="footer__col" aria-label="Institucional">
+        <h4>Institucional</h4>
+        <a href="https://cppem.com.br/quem-somos" target="_blank" rel="noopener">Quem Somos</a>
+        <a href="https://cppem.com.br/politica-de-privacidade" target="_blank" rel="noopener">Política de
+          Privacidade</a>
+        <a href="https://cppem.notion.site/vagas" target="_blank" rel="noopener">Trabalhe Conosco</a>
+      </nav>
+    </div>
+
+    <div class="container footer__bar">
+      <span>© <span id="year">2026</span> <strong>Cppem Colégio e Cursos LTDA.</strong> · Caruaru, Pernambuco</span>
+      <span class="footer__cnpj">CNPJ 57.347.872/0001-48</span>
+    </div>
+  </footer>
+
+  <!-- WhatsApp flutuante -->
+  <a class="float" id="whats" href="https://wa.me/558173105354" target="_blank" rel="noopener"
+    aria-label="Falar no WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
+    </svg>
+  </a>
+
+  <!-- Barra fixa (mobile) -->
+  <div class="dock" id="dock">
+    <div class="dock__info">
+      <b>Simuladão · <s>R$ 69,90</s> R$ 30</b>
+      <span>08/11 · Sede CPPEM · 100 vagas</span>
+    </div>
+    <a class="btn btn--gold" data-cta href="#ingressos"><span>Garantir vaga</span></a>
+  </div>
+
+  <!-- Aviso de venda fechada (ingresso sem link no CONFIG) -->
+  <div class="aviso" id="aviso" role="status" aria-live="polite">
+    <i aria-hidden="true"></i>
+    <span>As vendas do <b>Simuladão</b> abrem em breve. Fique de olho nesta página.</span>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="hero.js"></script>
+</body>
+
+</html>
