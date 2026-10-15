@@ -130,7 +130,7 @@
     if (!faixa || !txt) return;
 
     var mensagens = algumAberto
-      ? ["Vendas abertas!", "08/11 · Sede CPPEM", "PMPE · PCPE · PPPE", "De R$ 69,90 por R$ 30", "Apenas 100 vagas"]
+      ? ["Vendas abertas!", "08/11 · Caruaru – PE", "PMPE · PCPE · PPPE", "De R$ 69,90 por R$ 30", "Apenas 100 vagas"]
       : [];
     faixa.hidden = !mensagens.length;
     document.documentElement.classList.toggle("tem-alerta", mensagens.length > 0);
@@ -171,6 +171,13 @@
   $$("[data-cta]").forEach(function (btn) {
     btn.addEventListener("click", function () {
       push({ event: "clique_cta_ingressos", pagina: CONFIG.pagina });
+    });
+  });
+
+  /* [data-mapa] quem abre o mapa está decidindo ir: vale medir */
+  $$("[data-mapa]").forEach(function (el) {
+    el.addEventListener("click", function () {
+      push({ event: "clique_mapa", pagina: CONFIG.pagina });
     });
   });
 

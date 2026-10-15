@@ -66,8 +66,8 @@
 
 .palco {
   position: relative; z-index: 2; isolation: isolate;
-  width: 100%; max-width: 980px; height: calc(var(--wc) * 2.3);
-  margin: clamp(18px, 3.4vh, 34px) auto 0;
+  width: 100%; max-width: 980px; height: calc(var(--wc) * 1.75);
+  margin: clamp(6px, 1.4vh, 14px) auto 0;
   transform-origin: 50% 44%;
   --px: 0; --py: 0;
   animation: palco-afunda 1s cubic-bezier(.16,.8,.2,1) var(--t1) both;
@@ -84,7 +84,7 @@
 /* a caixa da cratera e do meteoro: a mesma, para o leão cair exatamente
    no buraco que ele deixa. Sem parallax: o fundo fica parado. */
 .marco {
-  position: absolute; left: 50%; top: 44%; z-index: 0;
+  position: absolute; left: 50%; top: 42%; z-index: 0;
   width: var(--cw); aspect-ratio: 400 / 465;
   transform: translate(-50%, -50%);
 }
@@ -169,7 +169,7 @@
 
 /* a bacia: a tela afunda em volta do choque e volta */
 .impacto-bacia {
-  position: absolute; z-index: 1; left: 50%; top: 44%;
+  position: absolute; z-index: 1; left: 50%; top: 42%;
   width: 95%; aspect-ratio: 1.8; border-radius: 50%; pointer-events: none;
   background: radial-gradient(ellipse, rgba(0,0,0,.8) 12%, rgba(0,0,0,.5) 35%, transparent 68%);
   box-shadow: inset 0 14px 35px rgba(0,0,0,.85), inset 0 -3px 12px rgba(255,181,106,.25);
@@ -244,7 +244,7 @@
 .escudo {
   --w: var(--ws); --x: 0px; --y: 0px; --giro: 0deg; --fundo: 1;
   --hit: var(--b1); --img: none;
-  position: absolute; left: 50%; top: 57%; z-index: 3;
+  position: absolute; left: 50%; top: 50%; z-index: 3;
   width: var(--w);
   transform:
     translate(-50%, -50%) translate(var(--x), var(--y))
@@ -569,9 +569,9 @@
    ========================================================= */
 @media (max-width: 720px) {
   .hero { --cw: calc(var(--wc) * 2.5); }
-  .palco { height: calc(var(--wc) * 2.65); margin-top: 12px; }
-  .marco { top: 43%; }
-  .escudo { top: 54%; }
+  .palco { height: calc(var(--wc) * 2.05); margin-top: 6px; }
+  .marco { top: 42%; }
+  .escudo { top: 50%; }
   .cratera__art { width: 225%; }
   .edital { right: -25%; bottom: -14%; padding: 5px 9px 6px; outline-offset: 2px; }
   .edital small { font-size: 8.5px; }

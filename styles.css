@@ -1455,4 +1455,27 @@ strong, b { font-weight: 700; color: var(--text); }
 }
 .dock__info s { font-size: 11px; letter-spacing: .6px; margin-right: 2px; }
 
+/* ─── o título: SIMULADÃO grande, as três provas pequenas embaixo ─── */
+.hero__title { font-size: clamp(46px, 10.5vw, 120px); }
+.hero__provas {
+  display: block; margin-top: 14px;
+  font-family: var(--font-ui); font-size: clamp(12px, 1.7vw, 16px); font-weight: 700;
+  letter-spacing: clamp(4px, 1.1vw, 10px); text-indent: clamp(4px, 1.1vw, 10px);
+  color: var(--gold-light); text-shadow: none;
+}
+
+/* ─── o link do mapa no "Anote na agenda" ─── */
+.info__mapa {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 14px;
+  padding: 8px 14px;
+  font-size: 12px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase;
+  color: var(--gold-light);
+  box-shadow: inset 0 0 0 1px var(--border-active);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  transition: background var(--t), color var(--t);
+}
+.info__mapa:hover { background: rgba(175,146,86,.14); color: var(--gold-pale); }
+.info__mapa svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+.faq__item a[data-mapa] { color: var(--gold-light); text-decoration: underline; text-underline-offset: 3px; }
+
 #faq::before  { background-image: url("public/marca-pppe.webp"); }
