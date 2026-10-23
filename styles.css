@@ -1484,3 +1484,29 @@ strong, b { font-weight: 700; color: var(--text); }
 .faq__item a[data-mapa] { color: var(--gold-light); text-decoration: underline; text-underline-offset: 3px; }
 
 #faq::before  { background-image: url("public/marca-pppe.webp"); }
+
+/* ---------- Horários do dia (seção "Onde e quando") ---------- */
+.dia { margin-top: 36px; }
+.dia__titulo {
+  margin: 0 0 16px; color: var(--gold-light);
+  font: 700 .78rem/1 var(--font-ui, inherit); letter-spacing: .18em; text-transform: uppercase;
+}
+.dia__linha { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.dia__passo {
+  position: relative; display: flex; flex-direction: column; gap: 6px;
+  padding: 22px 20px; background: var(--bg-2); border: 1px solid var(--border);
+}
+.dia__passo b { color: var(--text); font-size: 1.02rem; line-height: 1.3; }
+.dia__passo > span:last-child { color: var(--text-dim); font-size: 14px; line-height: 1.5; }
+.dia__hora { color: var(--gold-pale); font-size: clamp(1.9rem, 3.4vw, 2.5rem); font-weight: 800; line-height: 1; letter-spacing: .01em; }
+.dia__hora--fim { font-size: clamp(1.3rem, 2.2vw, 1.7rem); padding-bottom: 5px; }
+.dia__passo--alerta { border-color: rgba(194,91,82,.55); }
+.dia__passo--alerta .dia__hora { color: #E58A80; }
+.dia__passo--prova { border-color: var(--border-active); background: linear-gradient(180deg, rgba(175,146,86,.10), var(--bg-2)); }
+@media (max-width: 900px) { .dia__linha { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) {
+  .dia__linha { grid-template-columns: 1fr; gap: 10px; }
+  .dia__passo { padding: 16px 16px; display: grid; grid-template-columns: 84px 1fr; column-gap: 14px; row-gap: 2px; align-items: center; }
+  .dia__hora { grid-row: span 3; font-size: 1.7rem; }
+  .dia__hora--fim { font-size: 1.05rem; }
+}
